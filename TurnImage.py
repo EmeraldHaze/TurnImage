@@ -10,13 +10,13 @@ colors = {\
 }
 
 rules = {\
-    colors['black']:('set red' ,'turn -1', 'forward 1'),
-    colors['red']:('set black' ,'turn 1', 'forward 1'),
-    colors['white']:('set black' ,'turn 0', 'forward 0'),
+    colors['black']:('set red' ,'turn 3'),
+    colors['red']:('turn 0', 'forward 1'),
+    #colors['white']:('set black' ,'turn 0', 'forward 0'),
     }
 
-ticksperframe = 10
-startcolor = 'white'
+fps = 10
+startcolor = 'black'
     
 class Head:
     dirs = [(0, -1),
@@ -57,9 +57,11 @@ sarr = pygame.surfarray.pixels2d(screen)
 
 head = Head(301, 301, 0)
 
-sarr[299:302, 299:302] = colors["red"]
 
-def tick():
+print "Running"
+fpscount = 0
+while 1:
+    #Main
     color = sarr[head.getcords()]
     print head.getcords(), head.direct, hex(color)
     does = rules[color]
@@ -78,15 +80,12 @@ def tick():
             print 'color ', value
         else:
             raise Exception, "Invalid do"
-
-
-# -------- Wait loop-----------
-print "Running"
-while 1:
-    for x in range(ticksperframe):
-        tick()
-
-    pygame.display.flip()
+    if fpscount>fps:
+        pygame.display.flip()
+        fpscount = 0
+    else:
+        fpscount+=1
+    #Check for exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.flip()
