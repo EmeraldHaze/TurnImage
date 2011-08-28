@@ -1,5 +1,6 @@
 import pygame
 size = [600, 600]
+
 colors = {\
 'white': 0xFFFFFF,
 'red': 0xFF0000,
@@ -11,9 +12,11 @@ colors = {\
 rules = {\
     colors['black']:('set red' ,'turn -1', 'forward 1'),
     colors['red']:('set black' ,'turn 1', 'forward 1'),
-    #colors['black']:('turn 2', 'forward 1', 'set red', 'turn -4', 'forward 1', "turn -2", "forward 1", "turn 2"),
-    #colors['red']:('turn 2', 'forward 1', 'set red', 'turn -4', 'forward 1', 'turn 2', 'forward 1'),
+    colors['white']:('set black' ,'turn 0', 'forward 0'),
     }
+
+ticksperframe = 10
+startcolor = 'white'
     
 class Head:
     dirs = [(0, -1),
@@ -48,14 +51,15 @@ class Head:
 pygame.init()
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Drawer")
+screen.fill(colors[startcolor])
     
 sarr = pygame.surfarray.pixels2d(screen)
 
 head = Head(301, 301, 0)
 
-#Start value
 sarr[299:302, 299:302] = colors["red"]
-while 1:
+
+def tick():
     color = sarr[head.getcords()]
     print head.getcords(), head.direct, hex(color)
     does = rules[color]
@@ -72,17 +76,17 @@ while 1:
         elif cmd == 'set':
             sarr[head.getcords()] = colors[value]
             print 'color ', value
-            pygame.display.flip()
         else:
             raise Exception, "Invalid do"
-        
-            
-    
-        
-        
+
+
 # -------- Wait loop-----------
 print "Running"
 while 1:
+    for x in range(ticksperframe):
+        tick()
+
+    pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.flip()
